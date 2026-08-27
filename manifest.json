@@ -1,0 +1,64 @@
+[
+  {
+    "guid": "c24c5b8e-2fa8-47f6-a671-a7eb9d60c114",
+    "name": "Community",
+    "description": "Foro comunitario local integrado con usuarios y bibliotecas de Jellyfin.",
+    "overview": "Debates, mensajes, encuestas, notificaciones y moderación dentro de Jellyfin.",
+    "owner": "odoslf",
+    "category": "General",
+    "versions": [
+      {
+        "version": "1.6.0.0",
+        "changelog": "Versión final validada en Jellyfin 10.10.7: foro Web, usuarios normales, permisos, moderación y canal nativo Foro.",
+        "targetAbi": "10.10.7.0",
+        "sourceUrl": "https://github.com/odoslf/Jellyfin-Community/releases/download/v1.6.0.0/Jellyfin.Plugin.Community_1.6.0.0.zip",
+        "checksum": "8367BE20630F182210F87D64694C09A5",
+        "timestamp": "2026-08-27T21:00:17.479978Z",
+        "dependencies": []
+      }
+    ]
+  },
+  {
+    "guid": "e4138e6f-70db-40a2-9b21-171b3e839e99",
+    "name": "JellyPremiere",
+    "description": "Sistema profesional de anuncios, estrenos y notificaciones obligatorias para Jellyfin.",
+    "overview": "Crea anuncios, promociona estrenos de la biblioteca y emite avisos importantes u obligatorios directamente en Jellyfin.",
+    "owner": "odoslf",
+    "category": "General",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "Initial release of JellyPremiere plugin v1.0.0.0.",
+        "targetAbi": "10.10.7.0",
+        "sourceUrl": "https://github.com/odoslf/Jelly-fin-Premier/releases/download/v1.0.0.0/JellyPremiere_1.0.0.0.zip",
+        "checksum": "5e6fa6e2cd300770f550504c014d8a48",
+        "timestamp": "2026-08-19T23:53:05Z",
+        "targetSystem": "All"
+      }
+    ]
+  },
+  {
+    "guid": "c7f3299c-e35c-4122-8356-d710e2098b95",
+    "name": "JellyLiveNow",
+    "description": "Muestra a los demás usuarios qué canal Live TV se está viendo actualmente y permite unirse a él.",
+    "overview": "Canal nativo de Jellyfin para descubrir una emisión Live TV activa.",
+    "owner": "odoslf",
+    "category": "Live TV",
+    "versions": [
+      {
+        "version": "1.0.1.0",
+        "changelog": "Canal IChannel nativo, detección Live TV y reproducción mediante fuentes dinámicas de Jellyfin 10.10.7.",
+        "targetAbi": "10.10.7.0",
+        "sourceUrl": "https://github.com/odoslf/JellyLiveNow/releases/download/v1.0.1.0/JellyLiveNow_1.0.1.0.zip",
+        "checksum": "2f3a6c74af62ce54f1a8b7bedef863dd"
+      },
+      {
+        "version": "1.0.0.0",
+        "changelog": "Versión inicial de JellyLiveNow v1.0.0.0",
+        "targetAbi": "10.10.7.0",
+        "sourceUrl": "https://github.com/odoslf/JellyLiveNow/releases/download/v1.0.0.0/JellyLiveNow_1.0.0.0.zip",
+        "checksum": "3b2a2432a76f2d57e8499238e8ec4347"
+      }
+    ]
+  }
+]
