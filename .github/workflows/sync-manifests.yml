@@ -1,0 +1,44 @@
+name: Sync unified Jellyfin repository
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jellyfin-manifest-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Build and validate unified manifest
+        run: python scripts/sync_manifests.py
+
+      - name: Validate JSON
+        run: python -m json.tool manifest.json >/dev/null
+
+      - name: Commit only when a source changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- manifest.json; then
+            echo 'Unified manifest is already up to date.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add manifest.json
+          git commit -m 'chore: sync Jellyfin plugin catalog'
+          git push origin HEAD:main
