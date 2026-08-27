@@ -1,10 +1,12 @@
-name: Sync unified Jellyfin repository
+name: Sync and validate unified Jellyfin repository
 
 on:
   push:
     paths:
       - 'sources.json'
       - 'scripts/sync_manifests.py'
+      - 'scripts/prepare_runtime.py'
+      - 'scripts/catalog_e2e.py'
       - '.github/workflows/sync-manifests.yml'
   schedule:
     - cron: '*/15 * * * *'
@@ -20,30 +22,103 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
 
-      - name: Build and validate unified manifest
+      - name: Build and cryptographically validate unified manifest
         run: python scripts/sync_manifests.py
 
       - name: Validate JSON
         run: python -m json.tool manifest.json >/dev/null
 
-      - name: Commit only when a source changed
+      - name: Detect catalog changes
+        id: catalog
+        shell: bash
+        run: |
+          if git diff --quiet -- manifest.json; then
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
+            echo 'Unified manifest is already up to date.'
+          else
+            echo 'changed=true' >> "$GITHUB_OUTPUT"
+            echo 'A source release changed; running combined Jellyfin validation.'
+          fi
+
+      - name: Prepare all verified release packages
+        if: steps.catalog.outputs.changed == 'true'
+        run: python scripts/prepare_runtime.py
+
+      - name: Start official Jellyfin 10.10.7 with all plugins
+        if: steps.catalog.outputs.changed == 'true'
         shell: bash
         run: |
           set -euo pipefail
-          if git diff --quiet -- manifest.json; then
-            echo 'Unified manifest is already up to date.'
-            exit 0
+          chmod -R a+rwX runtime
+          docker pull jellyfin/jellyfin:10.10.7
+          docker run -d --name odos3d-catalog-e2e \
+            -p 8096:8096 \
+            -v "$PWD/runtime/config:/config" \
+            -v "$PWD/runtime/cache:/cache" \
+            jellyfin/jellyfin:10.10.7
+
+      - name: Combined Jellyfin 10.10.7 E2E
+        if: steps.catalog.outputs.changed == 'true'
+        env:
+          JELLYFIN_URL: http://127.0.0.1:8096
+        run: python scripts/catalog_e2e.py
+
+      - name: Capture and validate combined runtime logs
+        if: steps.catalog.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          docker logs odos3d-catalog-e2e > artifacts/combined-jellyfin-10.10.7.log 2>&1
+          grep -q 'Loaded plugin: Community ' artifacts/combined-jellyfin-10.10.7.log
+          grep -q 'Loaded plugin: JellyPremiere ' artifacts/combined-jellyfin-10.10.7.log
+          grep -q 'Loaded plugin: JellyLiveNow ' artifacts/combined-jellyfin-10.10.7.log
+          if grep -E '\[ERR\].*(Community|JellyPremiere|JellyLiveNow)|(Community|JellyPremiere|JellyLiveNow).*\[ERR\]' artifacts/combined-jellyfin-10.10.7.log; then
+            echo 'A catalog plugin emitted an error in the combined Jellyfin runtime.' >&2
+            exit 1
           fi
+
+      - name: Preserve runtime logs on failure
+        if: always() && steps.catalog.outputs.changed == 'true'
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          if docker inspect odos3d-catalog-e2e >/dev/null 2>&1; then
+            docker logs odos3d-catalog-e2e > artifacts/combined-jellyfin-10.10.7.log 2>&1 || true
+          fi
+
+      - name: Stop combined runtime
+        if: always() && steps.catalog.outputs.changed == 'true'
+        run: docker rm -f odos3d-catalog-e2e || true
+
+      - name: Upload combined validation evidence
+        if: always() && steps.catalog.outputs.changed == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: odos3d-jellyfin-10.10.7-combined-validation
+          path: |
+            artifacts/combined-packages.json
+            artifacts/combined-runtime-e2e.json
+            artifacts/combined-jellyfin-10.10.7.log
+          if-no-files-found: warn
+
+      - name: Commit only fully validated catalog changes
+        if: steps.catalog.outputs.changed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add manifest.json
-          git commit -m 'chore: sync Jellyfin plugin catalog'
+          git commit -m 'chore: sync verified Jellyfin plugin catalog'
           git push origin HEAD:main
