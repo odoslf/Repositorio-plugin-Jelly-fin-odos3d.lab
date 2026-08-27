@@ -19,25 +19,6 @@
     ]
   },
   {
-    "guid": "e4138e6f-70db-40a2-9b21-171b3e839e99",
-    "name": "JellyPremiere",
-    "description": "Sistema profesional de anuncios, estrenos y notificaciones obligatorias para Jellyfin.",
-    "overview": "Crea anuncios, promociona estrenos de la biblioteca y emite avisos importantes u obligatorios directamente en Jellyfin.",
-    "owner": "odoslf",
-    "category": "General",
-    "versions": [
-      {
-        "version": "1.0.0.0",
-        "changelog": "Initial release of JellyPremiere plugin v1.0.0.0.",
-        "targetAbi": "10.10.7.0",
-        "sourceUrl": "https://github.com/odoslf/Jelly-fin-Premier/releases/download/v1.0.0.0/JellyPremiere_1.0.0.0.zip",
-        "checksum": "5e6fa6e2cd300770f550504c014d8a48",
-        "timestamp": "2026-08-19T23:53:05Z",
-        "targetSystem": "All"
-      }
-    ]
-  },
-  {
     "guid": "c7f3299c-e35c-4122-8356-d710e2098b95",
     "name": "JellyLiveNow",
     "description": "Muestra a los demás usuarios qué canal Live TV se está viendo actualmente y permite unirse a él.",
@@ -58,6 +39,25 @@
         "targetAbi": "10.10.7.0",
         "sourceUrl": "https://github.com/odoslf/JellyLiveNow/releases/download/v1.0.0.0/JellyLiveNow_1.0.0.0.zip",
         "checksum": "3b2a2432a76f2d57e8499238e8ec4347"
+      }
+    ]
+  },
+  {
+    "guid": "e4138e6f-70db-40a2-9b21-171b3e839e99",
+    "name": "JellyPremiere",
+    "description": "Sistema profesional de anuncios, estrenos y notificaciones obligatorias para Jellyfin.",
+    "overview": "Crea anuncios, promociona estrenos de la biblioteca y emite avisos importantes u obligatorios directamente en Jellyfin.",
+    "owner": "odoslf",
+    "category": "General",
+    "versions": [
+      {
+        "version": "1.0.0.0",
+        "changelog": "Initial release of JellyPremiere plugin v1.0.0.0.",
+        "targetAbi": "10.10.7.0",
+        "sourceUrl": "https://github.com/odoslf/Jelly-fin-Premier/releases/download/v1.0.0.0/JellyPremiere_1.0.0.0.zip",
+        "checksum": "5e6fa6e2cd300770f550504c014d8a48",
+        "timestamp": "2026-08-19T23:53:05Z",
+        "targetSystem": "All"
       }
     ]
   }
