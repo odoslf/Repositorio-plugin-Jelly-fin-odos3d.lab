@@ -1,6 +1,11 @@
 name: Sync unified Jellyfin repository
 
 on:
+  push:
+    paths:
+      - 'sources.json'
+      - 'scripts/sync_manifests.py'
+      - '.github/workflows/sync-manifests.yml'
   schedule:
     - cron: '*/15 * * * *'
   workflow_dispatch:
