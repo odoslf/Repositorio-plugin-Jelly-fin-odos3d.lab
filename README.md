@@ -1,4 +1,4 @@
-# Repositorio unificado ODOS3D para Jellyfin
+# Repositorio unificado odos3d.lab para Jellyfin
 
 Este repositorio agrega automáticamente los catálogos de plugins de ODOS3D para que Jellyfin necesite una sola dirección de repositorio.
 
