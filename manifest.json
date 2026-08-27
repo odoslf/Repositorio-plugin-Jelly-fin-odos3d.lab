@@ -12,8 +12,8 @@
         "changelog": "Versión final validada en Jellyfin 10.10.7: foro Web, usuarios normales, permisos, moderación y canal nativo Foro.",
         "targetAbi": "10.10.7.0",
         "sourceUrl": "https://github.com/odoslf/Jellyfin-Community/releases/download/v1.6.0.0/Jellyfin.Plugin.Community_1.6.0.0.zip",
-        "checksum": "8367BE20630F182210F87D64694C09A5",
-        "timestamp": "2026-08-27T21:00:17.479978Z",
+        "checksum": "14B601B1893D3DEB27FE5EEA1E1AD9A2",
+        "timestamp": "2026-08-27T22:00:39.952278Z",
         "dependencies": []
       }
     ]
@@ -27,36 +27,29 @@
     "category": "Live TV",
     "versions": [
       {
-        "version": "1.0.1.0",
-        "changelog": "Canal IChannel nativo, detección Live TV y reproducción mediante fuentes dinámicas de Jellyfin 10.10.7.",
+        "version": "1.0.2.0",
+        "changelog": "Corrige el contrato de imagen del canal, normaliza la URL de imagen y mantiene la reproducción Live TV dinámica para Jellyfin 10.10.7.",
         "targetAbi": "10.10.7.0",
-        "sourceUrl": "https://github.com/odoslf/JellyLiveNow/releases/download/v1.0.1.0/JellyLiveNow_1.0.1.0.zip",
-        "checksum": "2f3a6c74af62ce54f1a8b7bedef863dd"
-      },
-      {
-        "version": "1.0.0.0",
-        "changelog": "Versión inicial de JellyLiveNow v1.0.0.0",
-        "targetAbi": "10.10.7.0",
-        "sourceUrl": "https://github.com/odoslf/JellyLiveNow/releases/download/v1.0.0.0/JellyLiveNow_1.0.0.0.zip",
-        "checksum": "3b2a2432a76f2d57e8499238e8ec4347"
+        "sourceUrl": "https://github.com/odoslf/JellyLiveNow/releases/download/v1.0.2.0/JellyLiveNow_1.0.2.0.zip",
+        "checksum": "000696c69df0bf93030301e99794e56a"
       }
     ]
   },
   {
     "guid": "e4138e6f-70db-40a2-9b21-171b3e839e99",
     "name": "JellyPremiere",
-    "description": "Sistema profesional de anuncios, estrenos y notificaciones obligatorias para Jellyfin.",
-    "overview": "Crea anuncios, promociona estrenos de la biblioteca y emite avisos importantes u obligatorios directamente en Jellyfin.",
+    "description": "Sistema de anuncios, estrenos y avisos para Jellyfin.",
+    "overview": "Banners y avisos automáticos en Jellyfin Web/WebView, más un canal nativo Estrenos para contenidos reproducibles vinculados a la biblioteca.",
     "owner": "odoslf",
     "category": "General",
     "versions": [
       {
-        "version": "1.0.0.0",
-        "changelog": "Initial release of JellyPremiere plugin v1.0.0.0.",
+        "version": "1.0.1.0",
+        "changelog": "Carga automática del cliente Web, convivencia con Community, canal Estrenos reproducible con fuentes reales de Jellyfin y validación E2E en Jellyfin 10.10.7.",
         "targetAbi": "10.10.7.0",
-        "sourceUrl": "https://github.com/odoslf/Jelly-fin-Premier/releases/download/v1.0.0.0/JellyPremiere_1.0.0.0.zip",
-        "checksum": "5e6fa6e2cd300770f550504c014d8a48",
-        "timestamp": "2026-08-19T23:53:05Z",
+        "sourceUrl": "https://github.com/odoslf/Jelly-fin-Premier/releases/download/v1.0.1.0/JellyPremiere_1.0.1.0.zip",
+        "checksum": "0682e5c6097f3a817935eadeaf89ad08",
+        "timestamp": "2026-08-27T21:49:41Z",
         "targetSystem": "All"
       }
     ]
