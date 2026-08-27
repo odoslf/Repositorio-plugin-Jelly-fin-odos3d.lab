@@ -16,13 +16,14 @@ OUTPUT_FILE = ROOT / "manifest.json"
 TARGET_ABI = "10.10.7.0"
 MAX_PACKAGE_BYTES = 50 * 1024 * 1024
 MD5_RE = re.compile(r"^[0-9a-fA-F]{32}$")
+VERSION_RE = re.compile(r"^\d+(?:\.\d+){1,3}$")
 
 
 def fetch_bytes(url: str, *, max_bytes: int | None = None, attempts: int = 3) -> bytes:
     last_error: Exception | None = None
     for attempt in range(1, attempts + 1):
         try:
-            request = urllib.request.Request(url, headers={"User-Agent": "ODOS3D-Jellyfin-Repository/1.0"})
+            request = urllib.request.Request(url, headers={"User-Agent": "ODOS3D-Jellyfin-Repository/1.1"})
             with urllib.request.urlopen(request, timeout=30) as response:
                 if response.status != 200:
                     raise RuntimeError(f"HTTP {response.status} for {url}")
@@ -54,10 +55,20 @@ def validate_source_url(url: str) -> None:
         raise ValueError(f"Source is outside the odoslf repositories: {url}")
 
 
+def version_key(number: str) -> tuple[int, int, int, int]:
+    if not VERSION_RE.fullmatch(number):
+        raise ValueError(f"Invalid numeric plugin version: {number!r}")
+    parts = [int(part) for part in number.split(".")]
+    if len(parts) > 4:
+        raise ValueError(f"Plugin version has too many components: {number!r}")
+    return tuple((parts + [0] * (4 - len(parts)))[:4])  # type: ignore[return-value]
+
+
 def validate_release(plugin_name: str, version: dict) -> None:
     number = version.get("version")
     if not isinstance(number, str) or not number.strip():
         raise ValueError(f"{plugin_name}: version is missing")
+    version_key(number)
 
     if version.get("targetAbi") != TARGET_ABI:
         raise ValueError(f"{plugin_name} {number}: targetAbi must be {TARGET_ABI}")
@@ -81,7 +92,7 @@ def validate_release(plugin_name: str, version: dict) -> None:
         )
 
 
-def validate_plugin(plugin: dict, source_url: str) -> None:
+def normalize_plugin(plugin: dict, source_url: str) -> dict:
     required = ("guid", "name", "description", "overview", "owner", "category", "versions")
     missing = [key for key in required if key not in plugin]
     if missing:
@@ -93,14 +104,30 @@ def validate_plugin(plugin: dict, source_url: str) -> None:
         raise ValueError(f"{source_url}: plugin has no versions")
 
     seen_versions: set[str] = set()
+    candidates: list[dict] = []
     for version in versions:
         if not isinstance(version, dict):
             raise ValueError(f"{source_url}: invalid version entry")
         number = version.get("version")
+        if not isinstance(number, str):
+            raise ValueError(f"{source_url}: version is missing")
+        version_key(number)
         if number in seen_versions:
             raise ValueError(f"{source_url}: duplicate version {number}")
         seen_versions.add(number)
-        validate_release(plugin["name"], version)
+        candidates.append(version)
+
+    # The unified repository intentionally exposes only the newest release from
+    # each source. Historical packages are not needed for fresh installs and a
+    # deleted/broken legacy asset must not prevent a valid current release from
+    # being published. The newest package is still downloaded and cryptographically
+    # matched against the manifest MD5 before it is accepted.
+    latest = max(candidates, key=lambda item: version_key(item["version"]))
+    validate_release(plugin["name"], latest)
+
+    normalized = dict(plugin)
+    normalized["versions"] = [latest]
+    return normalized
 
 
 def main() -> None:
@@ -123,16 +150,16 @@ def main() -> None:
         for plugin in source:
             if not isinstance(plugin, dict):
                 raise ValueError(f"{source_url}: invalid plugin entry")
-            validate_plugin(plugin, source_url)
-            guid = str(plugin["guid"]).lower()
-            name = str(plugin["name"]).casefold()
+            normalized = normalize_plugin(plugin, source_url)
+            guid = str(normalized["guid"]).lower()
+            name = str(normalized["name"]).casefold()
             if guid in seen_guids:
                 raise ValueError(f"Duplicate plugin GUID {guid}")
             if name in seen_names:
-                raise ValueError(f"Duplicate plugin name {plugin['name']}")
+                raise ValueError(f"Duplicate plugin name {normalized['name']}")
             seen_guids.add(guid)
             seen_names.add(name)
-            plugins.append(plugin)
+            plugins.append(normalized)
 
     plugins.sort(key=lambda item: item["name"].casefold())
     payload = json.dumps(plugins, ensure_ascii=False, indent=2) + "\n"
@@ -140,7 +167,7 @@ def main() -> None:
     temporary.write_text(payload, encoding="utf-8")
     json.loads(temporary.read_text(encoding="utf-8"))
     temporary.replace(OUTPUT_FILE)
-    print(f"Validated {len(plugins)} plugins and every referenced release package for ABI {TARGET_ABI}.")
+    print(f"Validated {len(plugins)} latest plugin releases for ABI {TARGET_ABI}.")
 
 
 if __name__ == "__main__":
