@@ -27,11 +27,11 @@
     "category": "Live TV",
     "versions": [
       {
-        "version": "1.0.2.0",
-        "changelog": "Corrige el contrato de imagen del canal, normaliza la URL de imagen y mantiene la reproducción Live TV dinámica para Jellyfin 10.10.7.",
+        "version": "1.0.3.0",
+        "changelog": "Release final validada sobre Jellyfin 10.10.7; alinea versión, paquete, tag y catálogo con el código realmente probado.",
         "targetAbi": "10.10.7.0",
-        "sourceUrl": "https://github.com/odoslf/JellyLiveNow/releases/download/v1.0.2.0/JellyLiveNow_1.0.2.0.zip",
-        "checksum": "000696c69df0bf93030301e99794e56a"
+        "sourceUrl": "https://github.com/odoslf/JellyLiveNow/releases/download/v1.0.3.0/JellyLiveNow_1.0.3.0.zip",
+        "checksum": "59eb7bd8a91c07c853de5778a0e2128b"
       }
     ]
   },
