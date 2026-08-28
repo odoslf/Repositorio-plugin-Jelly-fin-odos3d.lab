@@ -10,7 +10,7 @@ Incluye actualmente:
 
 - Community 1.6.0.0
 - JellyPremiere 1.0.1.0
-- JellyLiveNow 1.0.2.0
+- JellyLiveNow 1.0.3.0
 
 Todos apuntan a Jellyfin 10.10.7 (`targetAbi` 10.10.7.0).
 
